@@ -69,15 +69,16 @@ def clean_data(content, extract_start):
     totalfix = {"Province": "United States", "City": "Total", "CityCode": "00001"}
     cityfix = {"City": "All Locations"}
     kccitycodefix = {"CityCode": "99990"}
-
+    fixcount = 0
     for entry in newdict:
+        print(fixcount)
         if entry["Province"] == "" and entry["City"] == "":
             entry.update(totalfix)
         if entry["Province"] != "" and entry["City"] == "":
             entry.update(cityfix)
         if entry["Province"] == "Missouri" and entry["City"] == "Kansas City":
             entry.update(kccitycodefix)
-
+        fixcount += 1
     return newdict
 
 
@@ -98,7 +99,9 @@ def update_database(content):
 
     reccount = 0
     print("Updating City Table")
+    citycount = 0
     for statedata in content:
+        print(citycount)
         data = list(statedata.values())
         citydata = (data[0], data[1], data[2], data[3], data[4], data[5], data[6])
         try:
@@ -111,6 +114,7 @@ def update_database(content):
         except Exception as e:
             print(e)
         connection.commit()
+        citycount += 1
     print(f"{reccount} city rows inserted")
     print("Updating Data Table")
     covrowcount = 0
