@@ -45,16 +45,7 @@ def get_data_from_api(extract_start):
 
     newdict = clean_data(content, extract_start)
 
-    global dlreccount
-    dlreccount = 0
-    print("Starting Write")
-    with open("results.json", "w") as result:
-        json.dump(newdict, result, indent=2)
-        for city in newdict:
-            dlreccount += 1
-
-    print(f"{dlreccount} records retrieved")
-    return dlreccount
+    update_database(newdict)
 
 
 def clean_data(content, extract_start):
@@ -81,7 +72,7 @@ def clean_data(content, extract_start):
     return newdict
 
 
-def update_database():
+def update_database(content):
     connection = pymysql.connect(
         host=os.environ.get("DB_IP"),
         user=os.environ.get("DB_USER"),
@@ -92,9 +83,6 @@ def update_database():
     )
 
     mycursor = connection.cursor()
-
-    with open("results.json") as f:
-        content = json.load(f)
 
     reccount = 0
     print("Updating City Table")
@@ -138,6 +126,5 @@ def update_database():
 start = datetime.datetime.now()
 last_get_date = get_max_date()
 get_data_from_api(last_get_date)
-update_database()
 end = datetime.datetime.now()
 print(f"Elapsed time: {end - start}")
